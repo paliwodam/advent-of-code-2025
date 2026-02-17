@@ -1,5 +1,5 @@
-from collections import defaultdict
 from math import prod
+import time
 
 input_file = "inputs/day8.txt"
 with open(input_file) as file:
@@ -23,6 +23,7 @@ distances.sort()
 class UnionFind: 
     def __init__(self, size):
         self.parent = list(range(size))
+        self.sizes = [1 for _ in range(size)]
 
     def find(self, i):
         if self.parent[i] == i:
@@ -33,14 +34,26 @@ class UnionFind:
         irep = self.find(i)
         jrep = self.find(j)
         self.parent[irep] = jrep
+
+        tmp = self.sizes[irep]
+        self.sizes[jrep] += tmp
+        self.sizes[irep] -= tmp
     
 uf = UnionFind(n)
-for i in range(1000):
-    _, x, y = distances[i]
-    uf.unite(x, y)
 
-circuits = defaultdict(int)
-for i in range(n):
-    circuits[uf.find(i)] += 1
+def part1():
+    cnt = 0
+    while cnt < 1000:
+        _, i, j = distances.pop(0)
+        uf.unite(i, j)
+        cnt += 1
 
-print(prod(sorted(circuits.values(), reverse=True)[:3]))
+    return prod(sorted(uf.sizes, reverse=True)[:3])
+
+
+def part2():
+    while True:
+        _, i, j = distances.pop(0)
+        uf.unite(i, j)
+        if uf.sizes[uf.find(j)] == n:
+            return int(positions[i][0]) * int(positions[j][0])
