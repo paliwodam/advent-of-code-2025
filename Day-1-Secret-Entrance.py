@@ -20,3 +20,21 @@ def part1():
 
     return zero_count
 
+
+def part2():
+    position = starting_position
+    zero_count = 0
+    for rotation in rotations:
+        direction = rotation[0]
+        clicks = int(rotation[1:])
+        for _ in range(clicks):
+            if direction == 'L':
+                position -= 1
+            if direction == 'R':
+                position += 1
+            if position % 100 == 0:
+                zero_count += 1
+    return zero_count
+
+print(part1())
+print(part2())
